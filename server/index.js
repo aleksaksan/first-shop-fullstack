@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api', router);
 
-// обработка ошибок всегда добавляется в конец!
+// middleware обработки ошибок всегда добавляется вконеце!
 app.use(errorHendler);
 
 const start = async () => {
