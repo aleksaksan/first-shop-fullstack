@@ -29,17 +29,28 @@ class UserController {
     
     return res.json({token});
   }
-  async login(req, res) {
+  async login(req, res, next) {
+    const {email, password} = req.body;
+    const user = await User.findOne({where: {email}});
+    if (!user)
+      return next(ApiError.badRequest(`user with email: ${email} not found`));
 
+    let comparedPassword = bcrypt.compareSync(password, user.password);
+    if (!comparedPassword)
+      return next(ApiError.internal('incorrect password'));
+    
+    const token = generateJwt(user.id, user.email, user.role);
+    return res.json({token});
   }
   async check(req, res, next) {
     // const query = req.query;
-    // res.json(query.id);  
-    const {id} = req.query;
-    if (!id) {
-      return next(ApiError.badRequest('ID is not specified'));
-    }
-    res.json(id);  
+    // res.json(query.id);
+    // ///////////////////////////
+    // const {id} = req.query;
+    // if (!id) {
+    //   return next(ApiError.badRequest('ID is not specified'));
+    // }
+    // res.json(id);  
   }
 }
 
