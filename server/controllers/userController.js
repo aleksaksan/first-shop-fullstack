@@ -33,7 +33,7 @@ class UserController {
     const {email, password} = req.body;
     const user = await User.findOne({where: {email}});
     if (!user)
-      return next(ApiError.badRequest(`user with email: ${email} not found`));
+      return next(ApiError.badRequest(`user with email: ${req.body.email} not found`));
 
     let comparedPassword = bcrypt.compareSync(password, user.password);
     if (!comparedPassword)
@@ -51,6 +51,12 @@ class UserController {
     //   return next(ApiError.badRequest('ID is not specified'));
     // }
     // res.json(id);  
+    //////////////////////////////
+    // res.json({message: "all right"});
+    //////////////////////////////
+    const token = generateJwt(req.user.id, req.user.email, req.user.role);
+    return res.json({token});
+
   }
 }
 
